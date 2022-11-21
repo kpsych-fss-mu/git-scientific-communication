@@ -1,0 +1,252 @@
+---
+title: "COVID-19: Mortality, Vaccination, and Population"
+output: 
+  flexdashboard::flex_dashboard:
+    storyboard: true
+    social: menu
+    source: embed
+    theme: spacelab
+---
+
+
+```{r setup, include=FALSE}
+# Load required packages
+library(flexdashboard) # dashboard wrapping
+library(readxl) # data import
+library(stringr) # string manipulation
+library(tidyverse) # data wrangling
+library(tidygeocoder) # geocoding
+library(crosstalk) # interactivity
+library(highcharter) # charts
+library(broom) #output of built-in functions cleanup
+library(jsonlite) # json wrangling
+library(geojsonR) # geojson wrangling
+library(DT) # Table formatting
+library(leaflet) # maps
+library(leaflet.extras) # map tweaks
+library(htmltools) # widgets
+library(shiny)
+```
+
+```{r, warning=FALSE, message=FALSE}
+# Data import
+
+## Vaccination
+## Source: https://ourworldindata.org/grapher/cumulative-covid-vaccinations?tab=chart&stackMode=absolute&time=earliest..latest&region=World
+
+`%notin%` <- Negate(`%in%`)
+
+vaccination <- read.csv('cumulative-covid-vaccinations.csv') %>%
+                mutate(Date = as.Date(Date),
+                       country = case_when(country %in% c('England', 'Scotland', 'Wales', 'Northern Ireland', 'Gibraltar') ~ 'United Kingdom',
+                                           TRUE ~ country)) %>%
+                select(-Code) %>%
+                filter(country %notin% c('European Union', 'World')) %>%
+                group_by(country, Date) %>%
+                summarise(total_vaccination = sum(total_vaccinations)) 
+
+vaccination_latest <- vaccination %>%
+                        group_by(country) %>%
+                        filter(Date == max(Date))
+
+## Mortality
+## Source: https://coronavirus.jhu.edu/data/mortality
+
+mortality <- read.csv('mortality.csv')
+
+## Population
+## Source: https://www.worldometers.info/world-population/population-by-country/
+
+population <- read.csv('population.csv') %>%
+                mutate(country = case_when(country == 'Czech Republic (Czechia)' ~ 'Czechia',
+                                           TRUE ~ country))
+
+## Combination
+vaccination_mortality_population <- vaccination_latest %>%
+                          left_join(mortality, by = 'country') %>%
+                          left_join(population, by = 'country') %>%
+                          mutate(vaccinated_per_100k_inhabitants = round((total_vaccination / population) * 100000, 2),
+                                 deaths_per_100_inhabitants = round((deaths / population) * 100000, 2),
+                                 confirmed_per_100_inhabitants = round((confirmed / population) * 100000, 2),
+                                 vaccinated_per_deaths = round((total_vaccination / deaths) * 100000, 2),
+                                 vaccinated_per_100K_confirmed = round((total_vaccination / confirmed) * 100000, 2),
+                                 urban_pop = as.numeric(str_remove(urban_pop, ' %')))
+```
+
+### **The number of vaccinated and deaths caused by COVID-19.**
+
+```{r}
+vaccination_mortality_population %>%  
+  hchart('scatter',
+         hcaes(x = deaths_per_100_inhabitants,
+               y = vaccinated_per_100k_inhabitants, 
+               size = deaths_per_100k, 
+               color = deaths_per_100k), 
+         maxSize = "10%",  name = "Country")  %>%   
+         hc_chart(zoomType = "xy") %>%
+      hc_yAxis(type = "logarithmic", title = list(text = "Number of vaccinated per 100k inhabitants")) %>%
+      hc_xAxis(type = "logarithmic", title = list(text = "Number of deaths caused by COVID-19 per 100k inhabitants")) %>%
+      hc_tooltip(pointFormat = '{point.country}: {point.total_vaccination:,.0f} vaccinated, {point.population:,.0f} inhabitants') %>%
+      hc_chart(style = list(
+                                      fontWeight = "bold",
+                                      fontSize = 16)) %>%
+      hc_add_theme(hc_theme_ffx())
+```
+
+***
+
+**Data** *(2021-02-04)*
+
+* [*Vaccination*](https://ourworldindata.org/grapher/cumulative-covid-vaccinations?tab=chart&stackMode=absolute&time=earliest..latest&region=World). `r nrow(vaccination)` observations (multiple records per 1 country). `r ncol(vaccination)` variables (*Country*, *Date*, *Number of vaccinated*).
+* [*Mortality*](https://coronavirus.jhu.edu/data/mortality) - `r nrow(mortality)` countries. `r ncol(mortality)` variables (*Country* or *Number of confirmed cases*).
+* [*Population*](https://www.worldometers.info/world-population/population-by-country/) - `r nrow(population)` countries. `r ncol(population)` variables (*Country* or *Population*).
+
+**Chart**
+
+*X-axis*. The number of deaths caused by COVID-19 per 100k inhabitants in the respective country (i.e. "mortality").
+
+*Y-axis*. The number of vaccinated per 100k inhabitants in the respective country (i.e. "vaccination rate").
+
+*Circle size* and *color*. The number of deaths caused by COVID-19 per 100k confirmed COVID-19 cases in the respective country. Higher numbers result in circles with larger diameters and brighter colors (i.e. "lethality").
+
+*Zoom* by dragging a cursor, click on *Reset zoom* to reset the view.
+
+
+### **The number of reported vaccines.**
+
+```{r}
+vaccination_mortality_population %>%  
+  hchart(
+    "treemap",
+    hcaes(x = country, value = total_vaccination, color = urban_pop),
+    ) %>%
+  hc_chart(zoomType = "xy", style = list(
+                                      fontWeight = "bold",
+                                      fontSize = 16)) %>%
+  hc_colorAxis(stops = color_stops(colors = viridis::viridis(10))) %>%
+  hc_tooltip(useHTML = TRUE,pointFormat = "{point.name}
+                             Number of reported vaccinations: {point.value:,.0f}
+                             % of urban population: {point.urban_pop:,.0f}") %>%
+                hc_add_theme(hc_theme_ffx()) %>%
+  hc_legend(align = "center")
+```
+
+***
+
+*How many vaccinations have been reported per country?*
+
+*Can we assume that countries with higher share of population living in urban areas are more likely administer more vaccines?*
+
+Note the rounding of reported vaccination numbers in countries like China *(i.e. `r format(vaccination_mortality_population$total_vaccination[vaccination_mortality_population$country == 'China'], big.mark = ' ')`)* or Russia *(i.e. `r format(vaccination_mortality_population$total_vaccination[vaccination_mortality_population$country == 'Russia'], big.mark = ' ')`)* and compare it with the rest.
+
+**Chart**
+
+*Box size*. The absolute number of reported vaccinations.
+
+*Box color*. Share of population living in urban areas in the respective country. Higher numbers result in brighter colors of the boxes.
+
+*Zoom* by dragging a cursor, click on *Reset zoom* to reset the view.
+
+
+### **The number of days with recorded vaccinations.**
+
+```{r}
+# Load the world Map data
+data(worldgeojson, package = "highcharter")
+
+reporting_interval_map <- vaccination %>%
+  mutate(interval=Date-lag(Date)) %>%
+  group_by(country) %>%
+  summarize(no_of_entries = n()) %>%
+  mutate(country = case_when(country == 'Czechia' ~ 'Czech Republic',
+                             country == 'United States' ~ 'United States of America',
+                             TRUE ~ country))
+
+hc <- highchart() %>%
+  hc_add_series_map(
+    worldgeojson, reporting_interval_map, value = "no_of_entries", joinBy = c('name','country'),
+    name = "Number of days with recorded vaccinations"
+    )  %>% 
+  hc_chart(style = list(
+                                      fontWeight = "bold",
+                                      fontSize = 16)) %>%
+  hc_colorAxis(stops = color_stops(colors = viridis::viridis(10))) %>% 
+                hc_add_theme(hc_theme_ffx()) %>%
+  hc_mapNavigation(enabled = TRUE) %>%
+  hc_legend(align = "center") 
+
+hc
+
+```
+
+***
+
+```{r}
+vaccination_first <- vaccination %>%
+  group_by(country) %>%
+  filter(Date == min(Date))
+```
+
+
+*For how many times have countries recorded the number of vaccinated so far?*
+
+There are **`r length(unique(vaccination$country))` countries** with recorded vaccination numbers. The **first** vaccination was recorded for **`r vaccination$country[vaccination$Date == min(vaccination$Date)]`** on **`r min(vaccination$Date)`**. The **last initial** record is on **`r max(vaccination_first$Date)`** for **`r vaccination_first$country[vaccination_first$Date == max(vaccination_first$Date)]`**.
+
+**Map**
+
+*Area color*. The absolute value of days with reported number of vaccinated. Higher numbers result in brighter colors of the columns.
+
+*Zoom in* by clicking on the "+" button in the upper left corner of the map, *Zoom out* by clicking on the "-" button there. Alternatively, use *scrolling*.
+
+
+### **Frequency of reporting on vaccination.**
+
+```{r}
+reporting_interval <- vaccination %>%
+  mutate(interval=Date-lag(Date)) %>%
+  group_by(country) %>%
+  summarize(mean_interval = mean(interval, na.rm = TRUE))
+
+hchart(as.numeric(reporting_interval$mean_interval)) %>%
+  hc_colorAxis(stops = color_stops(colors = viridis::viridis(10))) %>%
+  hc_tooltip(borderWidth = 1, sort = TRUE, crosshairs = TRUE,
+             headerFormat = "",
+             pointFormatter = JS("function() {
+  return 'Between values '  + (this.x - 0.5) + ' and ' + (this.x + 0.5) + ' Count: ' +  this.y;    
+               }")) %>%
+  hc_yAxis(title = list(text = "Count")) %>%
+  hc_xAxis(title = list(text = "Average difference between two reporting points in time (in days)")) %>%
+  hc_chart(style = list(
+                        fontWeight = "bold",
+                        fontSize = 16)) %>%
+  hc_add_theme(hc_theme_smpl()) %>%
+  hc_legend(align = "center") %>%
+  hc_add_theme(hc_theme_ffx())
+```
+
+***
+
+```{r}
+# Create the function.
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+```
+
+
+*How often countries report the numbers of vaccinated?*
+
+50% of countries with at least two vaccination records inform each `r round(median(as.numeric(reporting_interval$mean_interval), na.rm = TRUE), 2)` day(s) and more frequently.
+
+**Chart**
+
+*Column size*. Interval of 5.
+
+*Column color*. The absolute value of days with reported number of vaccinated. Higher numbers result in brighter colors of the columns.
+
+*Zoom* by dragging a cursor, click on *Reset zoom* to reset your view.
+
+**Created by**
+Vít Gabrhel
+https://www.data-must-flow.com/

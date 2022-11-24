@@ -231,6 +231,8 @@ git push --set-upstream origin <your_branch>
 
 - It's always a good idea to do this `git pull` **before you start working on a new change/branch**. This will ensure that the project you are changing is **"fresh"**.
   - Congratulations! You just went through the "round" that most programmers do every day: making a change, pushing it to colleagues for review and incorporation, and pulling changes from others.
+  
+<img src="git-workflow.png" width="600" class="center">
 
 ## **Bug reporting** (issues)
 

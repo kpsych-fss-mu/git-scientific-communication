@@ -149,7 +149,7 @@ data("USArrests", package = "datasets")
 USArrests <- as.data.frame(USArrests)
 
 # Export the data frame as a .csv file with <your_name>
-write.csv(USArrests, file = "USArrests_<your_name>.csv", row.names = FALSE)
+write.csv(USArrests, file = "data/USArrests_<your_name>.csv", row.names = FALSE)
 ```
 
 > **Action**
@@ -157,7 +157,7 @@ write.csv(USArrests, file = "USArrests_<your_name>.csv", row.names = FALSE)
 - Add a file named after your name (or nickname) and commit it to git (`git add ...`; `git commit`):
 ```
 git add USArrests_<your_name>.csv
-git commit
+git commit -m "Add the USArrests data for the respective contributor"
 ```
 
 - Now all that's left to do is "just" **merge the change into the original** shared repository. But that's not easy: the repository you cloned [cannot be changed](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/managing-a-branch-protection-rule) by just anyone.
@@ -170,7 +170,7 @@ git commit
 
 > **Action**
 
-- **Log in to GitHub** and then go to the **address** you used for `git clone`. Find the **"Fork"** button on the top left and click it. This will create your own copy of the repository on GitHub. The address should be something like: `https://github.com/<your_name>/git-scientific-communication.git`.
+- **Log in to GitHub** and then go to the **address** you used for `git clone`. Find the **"Fork"** button on the top left and click it. This will create your own copy of the repository on GitHub. The address should be something like: `https://github.com/<your_github_name>/git-scientific-communication.git`.
 
 > **Action**
 
@@ -186,7 +186,7 @@ origin https://github.com/kpsych-fss-mu/git-scientific-communication.git (push)
 
 - Add a similar shortcut for your own repository on GitHub. Don't forget to replace your name with the name of the account you have on GitHub. (Note that your name appears twice in the command!)
 
-- `git remote add <your_name> https://github.com/<your_name>/git-scientific-communication.git` and check that it worked:
+- `git remote add <your_name> https://github.com/<your_github_name>/git-scientific-communication.git` and check that it worked:
 ```
 git remote -v
 origin git@github.com:kpsych-fss-mu/git-scientific-communication.git.git (fetch)
@@ -199,14 +199,14 @@ origin git@github.com:kpsych-fss-mu/git-scientific-communication.git.git (push)
 
 - So much for the setup - just do git remote add once for each repository. Then you can upload changes using:
 ```
-git push <your_name> <your_name_branch>
+git push --set-upstream origin <your_branch>
 ```
 
 - Which means: push the</u> `<your_name_branch>` <u>branch to the address stored under</u> `<your_name>`.
 
 > **Action**
 
-- Does it work? Look at `https://github.com/<your_name>/git-scientific-communication` in your browser and make sure your changes are there.
+- Does it work? Look at `https://github.com/<your_github_name>/git-scientific-communication` in your browser and make sure your changes are there.
 
 ## **Pull request**
 

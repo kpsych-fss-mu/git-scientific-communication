@@ -47,6 +47,8 @@
 - Install Git or check whether you have it already for your respective operation system:
 [Linux](https://github.com/git-guides/install-git?fbclid=IwAR1kihhEjz295LQ6s65BlIzxdTamThQBcVzBnBs1ZDQ0pKT4HOJLZF9aWT8#install-git-on-linux), [MacOs](https://github.com/git-guides/install-git?fbclid=IwAR1kihhEjz295LQ6s65BlIzxdTamThQBcVzBnBs1ZDQ0pKT4HOJLZF9aWT8#install-git-on-windows) and [Windows](https://github.com/git-guides/install-git?fbclid=IwAR1kihhEjz295LQ6s65BlIzxdTamThQBcVzBnBs1ZDQ0pKT4HOJLZF9aWT8#install-git-on-windows).
 
+In case you are **Windows** users, **consider installing shell** along the way. 
+
 ## **Using Git**
 - Git commants are run on the **shell**, also known as the **terminal**
 - The **shell** (*Zsh*, *PowerShell*,...)
@@ -66,6 +68,8 @@
 - *Create or edit a file* - `echo`
 
 For more commands, see (e.g.) the following [article](https://towardsdatascience.com/how-to-become-a-command-line-wizard-5d78d75fbf0c).
+
+Please note that the [**default command prompt**](https://www.makeuseof.com/tag/a-beginners-guide-to-the-windows-command-line) on **Windows uses different syntax**. 
 
 <img src="github.png" alias= "#github" width="400" class="center">
 
@@ -124,17 +128,12 @@ git clone https://github.com/kpsych-fss-mu/git-scientific-communication.git
 
 - This `master` / `main` branch is only good to use for commits that the whole team has already **agreed** on. So when you want to contribute to a project, the <u>first step is to make a new branch for your contribution and switch to that branch</u>. For example:
 ```
-git branch <your_name_branch>
-git checkout <your_name_branch>
+git branch <your_branch>
+git checkout <your_branch>
 ```
 
 ## **Pushing changes** (`git push`)
 > **Action**
-
-- In shell, move to the `data` folder
-```
-cd data
-```
 
 - In R, create a data file to be shared with others.
 
@@ -154,10 +153,24 @@ write.csv(USArrests, file = "data/USArrests_<your_name>.csv", row.names = FALSE)
 
 > **Action**
 
-- Add a file named after your name (or nickname) and commit it to git (`git add ...`; `git commit`):
+- Add a file named after your name (or nickname):
 ```
 git add USArrests_<your_name>.csv
+```
+
+- Use the `git status` to observe the indicated changes:
+```
+git status
+```
+
+- Commit the added file to git (`git commit`):
+```
 git commit -m "Add the USArrests data for the respective contributor"
+```
+
+- Again, use the `git status` and compare the outcome with the previous status:
+```
+git status
 ```
 
 - Now all that's left to do is "just" **merge the change into the original** shared repository. But that's not easy: the repository you cloned [cannot be changed](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/managing-a-branch-protection-rule) by just anyone.
@@ -202,7 +215,7 @@ origin git@github.com:kpsych-fss-mu/git-scientific-communication.git.git (push)
 git push --set-upstream origin <your_branch>
 ```
 
-- Which means: push the</u> `<your_name_branch>` <u>branch to the address stored under</u> `<your_name>`.
+- Which means: push the</u> `<your_branch>` <u>branch to the address stored under</u> `<your_name>`.
 
 > **Action**
 
@@ -218,7 +231,7 @@ git push --set-upstream origin <your_branch>
 
 - If you don't see the Compare & pull request button, go to the **address of your copy of the repository** and hit the **New pull request** button. **Select** what you want to include, **add/change** the label, then press **Create pull request**.
 - **You're done**! Now it's up to the **project authors** to look at the changes and **accept** them - or start a **discussion** about how to make them even better. (You can discuss on the pull request page or via email.)
-- This probably won't happen for adding a name to the attendance list, but if you needed to work on the change a bit more before incorporating it (even after a few days of discussion), it wouldn't be a problem. **Switch to the** `<your_name_branch>` **branch on your machine**, make **further commits**, and use **git push to update** your `<your_name_branch>` **pull request**.
+- This probably won't happen for adding a name to the attendance list, but if you needed to work on the change a bit more before incorporating it (even after a few days of discussion), it wouldn't be a problem. **Switch to the** `<your_branch>` **branch on your machine**, make **further commits**, and use **git push to update** your `<your_branch>` **pull request**.
 
 ## **Update** (`git pull`)
 - Once your **changes** - and those of others - have been **merged**, you can **update your local repository**.
@@ -226,7 +239,7 @@ git push --set-upstream origin <your_branch>
 
 > **Action** 
 
-- First, **switch back** to the `master` branch. Now you won't be working on `<your_name_branch>`; that branch is already committed.
+- First, **switch back** to the `master` branch. Now you won't be working on `<your_branch>`; that branch is already committed.
 - This is done with `git pull origin master` (pull changes from the "master" branch from the address under "origin"). You can use `gitk --all` or `git log` to see how the project has evolved in the meantime.
 
 - It's always a good idea to do this `git pull` **before you start working on a new change/branch**. This will ensure that the project you are changing is **"fresh"**.

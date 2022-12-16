@@ -111,6 +111,8 @@
 
 - Hynek is trying to propose this change.
 
+- Hynek has another change.
+
 - See the [open issues](https://github.com/kpsych-fss-mu/git-scientific-communication/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

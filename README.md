@@ -18,7 +18,7 @@
 <!-- PROJECT LOGO -->
 <br />
 
-  <h3 align="center">Introduction to Git and GitHub for the Scientific Communication</h3>
+  <h3 align="center">El Paso OUTtroduction to Git and GitHub for the Scientific Communication</h3>
 
   <p align="center">
     An awesome README template to jumpstart your projects!
@@ -111,6 +111,10 @@
 ## **Roadmap**
 
 [x] Add the content for the first part of the workshop
+
+- Hynek is trying to propose this change.
+
+- Hynek has another change.
 
 - See the [open issues](https://github.com/kpsych-fss-mu/git-scientific-communication/issues) for a full list of proposed features (and known issues).
 

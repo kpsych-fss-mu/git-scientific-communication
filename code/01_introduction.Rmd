@@ -1,0 +1,1001 @@
+---
+title: "Úvod do R"
+author: "Karel Rečka"
+date: "`r format(Sys.time(), '%d. %m. %Y')`"
+knit: (function(inputFile, encoding) { 
+      out_dir <- 'tutorials';
+      rmarkdown::render(inputFile,
+                        encoding=encoding, 
+                        output_file=file.path(dirname(inputFile), out_dir, '01_introduction.html')) })
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 2
+    number_sections: yes
+    theme: readable
+    highlight: zenburn
+  
+---
+```{css, echo=FALSE}
+.output-background {
+  background-color: #F6F6F6;
+  border-color: black;
+  border-width: medium;
+}
+```
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  cache = TRUE,
+  comment = ">#",
+  collapse = FALSE,
+  fig.width = 7,
+  out.width = "80%",
+  fig.align = "center",
+  fig.asp = 0.618,
+  render = knitr::normal_print,
+  class.output = "output-background"
+)
+
+xaringanExtra::use_clipboard(button_text = "Zkopírovat",
+                             success_text = "Zkopírováno!",
+                             error_text = "Press Ctrl+C to Copy",
+                             minified = FALSE)
+```
+# Balíčky
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+# Orientace v R Studiu
+  * Konzole
+  * Vytvoření nového skriptu
+  * Environment/History/Connections
+  * Files/Plots/Packages/Help/Viewer
+* Vytvoření nového projektu: **File – New Project**
+* Nastavení vzhledu: **Tools – Global Options – Appearance**
+* Změna klávesových zkratek: **Tools – Modify Keyboard Shortcuts**
+
+# R jako kalkulačka
+R lze využít jako kalkulačku. Podobné symboly pro matematické operace využívá 
+i Excel.
+```{r}
+# Sčítání
+5 + 50 
+
+# Odčítání
+5 - 5
+
+# Násobení
+3 * 5
+
+# Dělení
+(5 + 5) / 2 
+
+# Umocňování
+2^10
+
+# Odmocňování
+sqrt(9)
+9^(1/2)
+8^(1/3)
+
+# Celočíselné dělení
+16 %/% 6
+
+# Zbytek po celočíselném dělení
+16 %% 6
+```
+#  Klávesové zkrakty
+Psaní symbolů na české klávesnici skrze pravý alt:
+
+* **R Alt + X** = hashtag # (používá se pro uvození komentářů ve skriptu)
+* **R Alt + F** = hranaté závorky [] (používají se pro výběr prvků – subsetting)
+* **R Alt + B** = složené závorky {} (používají se při vytváření funkcí)
+* **R Alt + čárka** = menší než < 
+* **R Alt + tečka**= větší net >
+* **R Alt + ů** = znak dolaru $ 
+* **R Alt + C** = znak & (používá se jako logický operátor *a zároveň*)
+* **R Alt + W** = svislice | (používá se jako logický operátor *anebo*)
+* **R Alt + Š**, poté jakýkoli znak = stříška ^
+* **R Alt + Ý**, potéjakýkoli znak = zpětný apostrof `` (používá se pro 
+odkazování na nestandardní názvy)
+
+Alternativa - přepnutí na anglickou klávesnici, kde jsou tyty symboly dostupnější.
+
+## Modifikovatelné klávesové zkratky RStudia
+
+* **Alt + Shift + K**   pro seznam klávesových zkratek RStudia
+* **Ctrl + Enter**      pro spuštění aktuálního kódu na označeném řádku
+* **Ctrl + Alt + P**    znovu spustí kód, který byl spuštěn naposledy
+* **Ctrl + Alt + R**    spustí všechen kód
+* **Alt + -**           vloží assigment operátor <- pro tvorbu objektů
+* **Alt + L**           zabalí aktuální blok kód
+* **Alt + Shift + L**   rozbalí aktuální blok kód
+* **Alt + O**           zabalí všechen kód
+* **Alt + Shift + O**   rozbalí všechen kód
+* **Ctrl + Shift + R**  vloží nový nadpis
+* **Ctrl + Shift + M**  vloží pipe operátor `%>%` (nověji `|>`) 
+
+# Objekty
+
+## Tvorba objektů
+
+Objekt reprezentují hodnoty (např. "0" nebo "Jablko") nebo jiné objekty. 
+Např. dataset je objekt obsahující jiné objekty, tj. jednotlivé proměnné.
+
+Nové objekty lze vytvářet pomocí <- ve formě: `object_name <- value`
+
+Při pojmenování objektů doporučuji používat tzv. **snake_case**: nepužívat
+velká písmena a jednotlivá slova/výrazy oddělovat pomocí underscore
+
+* i_use_snake_case
+* otherPeopleUseCamelCase
+* some.people.use.periods
+* And_aFew.People_RENOUNCEconvention
+
+```{r error=TRUE}
+# Přidělit objektu x hodnotu 42
+x <- 42 
+
+# vyvolat/prozkoumat objekt lze jenoduše napsáním jeho jména
+x
+
+r_rocks <- 666
+
+# Proč tento kód nefunguje? Je R "case sensitive"?
+r_rock
+
+R_rocks
+
+# Jde to i naopak?
+33 -> y
+y
+```
+1. Vytvořte proměnnou my_age s hodnotou vašeho věku v letech
+1. Vyvolejte tuto proměnnou
+1. Vytvořte proměnnou year se současným rokem
+1. Odečtěte my_age od year a vytvořte proměnnou birth_year
+1. Vyvolejte proměnnou birth_year
+```{r}
+# Změňte hodnotu my_numeric na vaše oblíbené číslo
+my_numeric <- 17
+my_numeric
+
+# Změňte hodnotu my_character např. na jméno vaší oblíbené kapely
+my_character <- c("Iron Maiden")
+my_character
+
+# Změňte hodnotu my_logical na FALSE
+my_logical <- TRUE
+my_logical
+
+# Vyvolejte proměnné my_numeric, my_character i my_logical
+
+# Aplikujte funkci typeof() na objekty my_numeric, my_character i my_logical
+```
+Jednou z nejpoužívanějších funkcí je funkce `c()` (combine, concatenate),
+která umožňuje sloučit více prvků dohromady čili vytvářet vektory o délce 
+větší než 1.
+```{r}
+x <- c(8, 5, 9, 10, 16)
+x
+```
+# Vektory 
+## Vlastnosti vektorů
+Existují dva základní typy vektorů.
+Atomické vektory (**atomic** vectors) a listy (**lists**).
+Nejdůležitějšími atomickými vektory jsou vektory logické (**logical**), 
+celá čísla (**integer**) a reálná čísla (**double**).
+Hlavní rozdíl mezi atomickými vektory a listy je ten, že atomické vektory jsou 
+homogenní (všechny prvky jsou stejného typu, např. pouze celá čísla). O atomických
+vektorech lze uvyžovat jako o jednotlivých proměnných.
+
+Každý vektor má dvě hlavní vlastnosti: 
+
+* **typ**, který lze určit pomocí funkce `typeof()`; 
+* a **délku**, kterou lze určit pomocí funkce `lenght()`
+
+```{r}
+# letters ja zabudovaný vektor typu character se základními písmeny abecedy
+letters
+
+typeof(letters)
+
+1:10
+
+typeof(1:10)
+
+typeof(c(TRUE, FALSE, TRUE))
+
+x <- list("a", "b", 1:10)
+length(x)
+
+typeof(x)
+
+length(1:10)
+
+length(letters)
+
+typeof(c(TRUE, FALSE, 1, 5))
+
+c(TRUE, FALSE, 1, 5)
+```
+
+Vektory také mohou obsahovat různá metadata ve formě tzv. atributů.
+Tyto atributy využívají tzv. augmentované vektory, jimiž jsou například:
+
+* **Faktory**, jejichž základem jsou vektory typu integer;
+* **Data** a **data-plus-časy**, jejichž základem jsou vektory typu double;
+* **data frames** a **tibbles**, jejichž základem jsou listy.
+
+## Základní typy atomických vektorů
+Vektory typu **logical** jsou nejjednodušším typem atomických vektorů,
+protože mohou nabývat pouze tří možných hodnot: `TRUE`, `FALSE` a `NA`, tj. 
+pravda, nepravda a NA jako chybající hodnota (not available)
+```{r}
+c(TRUE, TRUE, FALSE, NA)
+```
+Mezi numerické vektory (**numeric**) se řadí vektory typu **integer** a **double** 
+čili celá čísla a reálná čísla. Defaultně R vytváří vektory typu double, abychom
+vytvořili vektor typu integer, musíme za číslo doplnit písmeno L. Také při 
+generování sekvence číšel pomocí dvojtečky je výstupem vektor typu integer.
+```{r}
+typeof(1)
+
+typeof(1L)
+
+typeof(1:10)
+```
+Obvykle není potřeba mezi integers a doubles rozlišovat, ale je třeba mít na 
+paměti, že doubles jsou pouze aproximace. Protože paměť počítače není
+nekonečná, pamatuje si jen určitý počet desetinnýh míst, a proto se R
+nemusí někdy chovat tak, jak bychom očekávali.
+```{r}
+x <- sqrt(2) ^ 2
+x
+
+x - 2
+
+x == 2
+
+# Funkce near počítá s nějakou (velmi malou) tolerancí
+near(x, 2)
+
+```
+Vektory typu **character** jsou nejkomplexnější, protože mohou zahrnovat
+jakékoli znaky (řetězce znaků) a počet těchto znaků je téměř neomezený.
+```{r}
+x <- "This is a reasonably long string."
+x
+```
+## Konverze mezi typy vektorů
+Existují dva způsoby, jak kovertovat jeden typ vektoru v jiný: explicitně
+a implicitně.
+
+**Explicitní konverze** znamená, že použijeme použijeme přímo funkce k tomu
+určené, např. `as.logical()`, `as.integer()`, `as.double()` nebo `as.character()`
+```{r}
+as.integer(c(TRUE, FALSE, TRUE))
+
+as.character(c(1, 2, 3, 4))
+
+as.logical(c(0, 1, 0, 1))
+
+as.double(c("0.1", "1.5", "3.6"))
+```
+Implicitní konverze znamená, že použijeme vektor ve specifickém kontextu,
+který očekává určitý typ vektoru
+```{r}
+x <- sample(1:20, 100, replace = TRUE)
+x # číselný vektor
+
+y <- x > 10
+y # logický vektor TRUE/FALSE 
+# prvky, pro které podmínka platí – TRUE
+# prvky, pro které podmínka neplatí – TRUE
+
+# Implicitní konverze TRUE na 1 a FALSE na 0 při použití funkcí sum() a mean()
+sum(y)
+
+mean(y)
+```
+Při tvorbě vektorů s více prvky pomocí funkce c() má vždy přednost složitější typ, 
+protože převod jednoduššího typu vektoru na složitější je možný, ale naopak to často
+není možné (nedávalo by např. smysl převádět věty na celá čísla).
+```{r}
+c(TRUE, 0L)
+
+typeof(c(TRUE, 0L))
+
+c(TRUE, 0L, 2.5)
+
+typeof(c(TRUE, 0L, 2.5))
+
+c(TRUE, 0L, 2.5, "one")
+
+typeof(c(TRUE, 0L, 2.5, "one"))
+
+```
+## Ověření typu vektoru
+Často potřebujeme vektory nějak transformovat, sumarizovat apod., ale 
+operace, kterou chceme provést, závisí na typu vektoru. Prvním ze způsobů,
+jak ověřit typ vektoru, je funkce typeof(), která vrací typ vektoru.
+```{r}
+typeof(c(TRUE, FALSE))
+```
+Druhým způsobem jsou testovací funkce, které vracejí hodnoty `TRUE` nebo `FALSE`,
+podle toho, zda je testovaný vektor daného typu.
+```{r}
+is_logical(c(TRUE, FALSE))
+
+is_logical(c(0, 1))
+
+
+is_integer(c(1L, 2L))
+
+is_integer(c(1, 2))
+
+
+is_double(c(1.2, 2.4))
+
+is_double(c(1L, 2L))
+
+
+is_numeric(c(1.2, 2.4))
+
+is_numeric(c(1L, 2L))
+
+
+is_character(c("1", "2"))
+
+is_character(c(1, 2))
+
+
+is_atomic(c(1, 2))
+
+is_atomic(list(1, c(1, 2)))
+
+
+is_list(c(1, 2))
+
+is_list(list(1, c(1, 2)))
+
+
+is_vector(c(1, 2))
+
+is_vector(NULL)
+```
+## Recyklace prvků vektoru
+Každé zřejmě uhádne, co se stane, když sečteme (vynásobíme, odečteme apod.) 
+vektory stejné délky
+```{r}
+c(1, 2, 3) + c(4, 5, 6)
+
+c(1, 2, 3) * c(4, 5, 6)
+
+c(1, 2, 3) / c(4, 5, 6)
+```
+Co když ale vektory nemají stejnou délku? Kromě implicitní konverze typů vektorů
+si R také implicitně vynutí stejnou délku vektorů. Tomu se říká recyklace, 
+protože prvky kratšího vektoru (toho s méně prvky) jsou opakovány, 
+dokud jeho délka neodpovídá délce vektoru s více prvky.
+```{r}
+# Tyto operace jsou tedy ekvivaletní
+c(1, 2, 3) + 10
+
+c(1, 2, 3) + c(10, 10, 10)
+
+
+1:10 + 1:2
+
+c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) + c(1, 2, 1, 2, 1, 2, 1, 2, 1, 2)
+
+
+1:10 + 1:3
+
+
+c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) + c(1, 2, 3, 1, 2, 3, 1, 2, 3, 1)
+```
+## Pojmenování prvků vektoru
+Prvky jakéhokoli typu vektoru lze pojmenovat, a to už při jeho vytváření. 
+Jména jsou jedním z možných atributů vektoru.
+```{r}
+x <- c(x = 1, y = 2, z = 4)
+x
+
+names(x)
+
+attributes(x)
+```
+Jména prvků lze doplnit i poté, co byl vektor vytvořen.
+```{r}
+x <- c(1, 2, 4)
+x
+
+# Jeden z možných způsobů
+names(x)
+
+names(x) <- c("x", "y", "z")
+x
+
+names(x)
+
+# Další z možných způsobů
+x <- c(1, 2, 4)
+x <- set_names(x, c("x", "y", "z"))
+x
+```
+## Výběr prvků vektoru (subsetting)
+Existují tři hlavní způsoby, jak vybrat prvky jednoho vektoru pomocí 
+jiného vektoru. Všechny z nich ale používají hranaté závorky.
+
+Zaprvé, **pomocí jiného, celočíselného vektoru**.
+```{r error=TRUE}
+x <- c("one", "two", "three", "four", "five")
+x
+
+x[c(3, 2, 5)]
+
+# Opakováním čísel/pozic můžete vytvořit delší vektor, než byl vektor vstupní
+x[c(1, 1, 1, 5, 5, 5, 2)]
+
+# Záporné hodnoty vedou k vyřazení prvků na daných pozicích
+x[c(-1, -3, -5)]
+
+x[-c(1, 3, 5)] # snadnější zápis
+
+# Ale nejde mísit dohromady kladné a záporné hodnoty
+x[c(1, -1)]
+
+```
+Zadruhé, **pomocí logického vektoru**, kdy jsou zachovány všechny prvky, kterým
+koresponduje hodnota TRUE. To je nejužitečnější s využitím srovnávacích funkcí
+a logických operátorů, jako jsou:
+
+* **<** znamená *menší než*; 
+* **>** znamená *větší než*;
+* **<=** znamená *menší nebo rovno*;
+* **>=** znamená *větší nebo rovno*;
+* **==** znamená *rovno*;
+* **!=** znamená *nerovno*;
+* **&** znamená *a zároveň* (jsou obě podmínky splněny?);
+* **|** znamená *anebo* (je aspoň jedna z podmínek splněna?).
+```{r error=TRUE}
+x <- c(10, 3, NA, 5, 8, 1, NA)
+x
+
+x[c(TRUE, TRUE, FALSE, FALSE, FALSE)]
+
+x[c(TRUE, FALSE)] # Opět dochází k recyklaci, takže je vybrán každý lichý prvek
+
+# Všechny hodnoty vyšší než 5 (ponechá i missing values)
+x[x > 5]
+
+# Všechny hodnoty dělitelné dvěmi (opět ponechá i missing values)
+x[x %% 2 == 0]
+
+```
+K ověření toho, zda je nějaký prvek missing value, je nutné použít funkci
+`is.na()` (tím se eRka ptáme *je prvek chybějící?*), nikoli `x[x == NA]` (tím 
+bychom se eRka ptali. jestli má prvek určitou hodnotu, ale neřekli bychom
+mu jakou, takže výsledkem by byl jen vektor `NA`).
+```{r}
+# Toto nefunguje, jak bychom asi očekávali
+x[x == NA]
+
+# Jak tedy vybrat všechny nechybějící prvky?
+is.na(x) # funkce is.na() vrací TRUE, když je prvek NA (missing value)
+
+!is.na(x) # pomocí výkřičníku můžeme negovat
+
+x[!is.na(x)] # výběr všech non-missing values
+```
+Zatřetí, pokud jsou prvky vektoru pojmanovány, můžeme k výběru prvků použít 
+jiný **vektor typu character**.
+```{r}
+x <- c(abc = 1, def = 2, xyz = 5)
+
+x[c("xyz", "def")]
+
+x[c("xyz", "xyz", "xyz")]
+```
+Kromě hranatých závorek je možné použít i dvojité hranaté závorky.
+Použití `[[` vždy vybere pouze jediný prvek vektoru (kdybychom se pokoušeli
+vybrat více prvků, vyústí to v chybové hlášení) a také vždy vymaže jméno prvku.
+
+### Cvičení{-}
+
+* Co nám řekne `mean(is.na(x))` o vektoru x?
+* Co se stane, když subsetujeme pomocí číselného vektoru, jehož hodnoty jsou
+větší než délka původního vektoru?
+* Co se stane, když prvek s daným jménem neexistuje?
+* Jaký je rozdíl v chování `[` a `[[`, když subsetujeme neexistující prvky?
+* Vyzkoušejte si všechny logické operátory.
+```{r error=TRUE}
+x <- c(1, 2, 3, NA)
+is.na(x)
+
+mean(is.na(x))
+
+mean(!is.na(x))
+
+x <- c(a = 10, b = 20)
+x[1:5]
+
+x[c("a", "b", "c", "d", "e")]
+
+x[3]
+
+x[[3]]
+
+# Na tomto vektoru si vyzkoušejte různé logické operátory
+set.seed(123)
+x <- sample(1:20, size = 100, replace = TRUE)
+```
+# Listy (rekurzivní vektory, lists)
+Listy jsou komlexnější než atomické vektory, protože mohou obsahovat jiné listy
+nebo atomické vektory. Jsou tak ideální pro tvorbu hierarchických datových 
+struktur.
+```{r}
+x <- list(1, c(2, 3), c("A", "B", "C"))
+x
+```
+Velmi užitečná je funkce `str()`, protože zobrazuje strukturu listu.
+```{r}
+str(x)
+
+x_named <- list(a = 1, b = 2, c = 3)
+str(x_named)
+```
+Jak bylo naznačeno. Na rozdíl od atomických vektorů mohou listy obsahovat směs 
+různých typů objektů. Dokonce i jiné listy. 
+```{r}
+y <- list("a", 1L, 1.5, TRUE)
+str(y)
+
+z <- list(list(1, 2), list(3, 4))
+str(z)
+```
+## Subsetting listu
+Existují tři způsoby, jak subsetovat list (vybrat prvky listu). Jejich použití 
+si můžeme ukázat na listu `à`
+```{r}
+a <- list(
+  a = 1:3, 
+  b = "a string", 
+  c = pi, 
+  d = list(-1, -5)
+  ) 
+
+str(a)
+```
+Pomocí `[` vytvoříme list s vybranými prvky. Zachováváme tedy list jako typ
+outputu. Je to, jako bychom z původního listu "vyházeli" prvky, které
+nepotřebujeme.
+```{r}
+a[1:2]
+
+a[4]
+
+str(a[1:2])
+
+str(a[4])
+```
+Pomocí `[[` jakoby "vyřízneme" prvek listu a odstraníme přitom jednu úroveň
+hierarchie.
+```{r}
+str(a[[1]])
+
+a[[1]]
+```
+Pokud mají prvky listu jména, můžeme subseting provést takto:
+```{r}
+# Výběr více prvků
+a[c("a", "b")]
+
+# Vyříznutí jednoho prvku
+a[["b"]]
+
+a$b
+```
+# Faktory
+Faktory (factors) jsou určeny k reprezentaci kategorických proměnných, 
+tj. proměnných, které mohou nabývat jen několika jedinečných hodnot. 
+Zjednodušeně řečeno, faktory jsou eRkovské označení pro kategorické proměnné. 
+Jejich základem je vektor typu integer, ale jsou "augmentovaný" o aribut `levels`,
+který definuje úrovně a jejich pořadí.
+```{r}
+temps <- c("cold", "hot", "hot", "warm", "cold", "cold", "warm")
+factor(temps)
+```
+Defaultní je pořadí podle abecedy. Ale pomocí argumentu **levels** jej můžeme
+změnit
+```{r}
+temps_fct <- factor(temps, 
+                    levels = c("cold", "warm", "hot"))
+temps_fct
+```
+Často jsou jednotlivé kategorie nejprve kódovány numericky a jejich labely
+doplněny pomocí argumentu **labels**.
+```{r}
+temps <- c(1, 3, 3, 2, 1, 1, 2)
+temps
+
+temps_fct <- factor(temps,
+                    levels = c(1, 2, 3),
+                    labels = c("cold", "warm", "hot"))
+temps_fct
+```
+# Matice (matrix)
+Matice (matrix) je v eRku také atomický vektor, protože může zahrnovat pouze
+prvky stejného typu (např. jen reálná čísla), ale opět jde o "agumentovaný" atomický 
+vektor, protože má dvě dimenze: řádky a sloupce. Je tedy dvoudimenzionální.
+
+Takto lze v eRku pomocí funkce matrix() vytvořit matici. Argument `byrow`
+specifikuje, zda chceme matici plnit po řádcích. Argumenty `nrow` a `ncol`
+specifikují, kolik řádků nebo sloupců má matice mít. Stačí vyplnit jen
+jeden z nich, protože pokud máme např. 12 prvků a mají se rozdělit do tří řádků,
+je jasné, že sloupce musejí být čtyři.
+```{r}
+# Nejprve vytvoříme atomický vektor
+x <- 1:12 
+x
+
+matrix(x, byrow = TRUE, nrow = 3)
+
+matrix(x, byrow = FALSE, nrow = 3)
+
+matrix(x, byrow = FALSE, ncol = 2)
+```
+## Pojmenování řádků a sloupců matice
+Jednotlivé prvky matice pojmenovat nelze, ale můžeme pojmenovat její řádky 
+a sloupce, buďto rovnou při jejím vytváření (pomocí argumentu dimnames, což
+musí být list obsahující dva atomické vektory odpovídající délky), nebo dodatečně
+pomocí funkce dimnames(), resp. colnames() a rownames()
+```{r}
+# Již při vytváření
+m <- matrix(x, byrow = FALSE, nrow = 3,
+            dimnames = list(
+              c("row1", "row2", "row3"), # vektor s labely pro řádky matice
+              c("col1", "col2", "col3", "col4") # vektor s labely pro sloupce matice
+              )
+            )
+m
+
+# Dodatečně
+m <- matrix(x, byrow = FALSE, nrow = 3)
+m
+
+dimnames(m) <- list(c("row1", "row2", "row3"), # vektor s labely pro řádky matice
+                    c("col1", "col2", "col3", "col4")) # vektor s labely pro sloupce matice
+m
+
+m <- matrix(x, byrow = FALSE, nrow = 3)
+rownames(m) <- c("row1", "row2", "row3")
+colnames(m) <- c("col1", "col2", "col3", "col4")
+m
+```
+## Výběr řádků a sloupců matice
+Protože matice je vlastně atomický vektor, můžeme selektovat její prvky 
+podobně jako u jiných atomických vektorů pomocí hranatých závorek. 
+Ale protože má dvě dimenze, rozlišujeme výběr řádků a sloupců. 
+Nejlepší je ukázat si to názorně.
+```{r}
+m[1, 2] # Výběr hodnot z prvního řádku a druhého sloupce
+
+m[c(1,2), c(1,2)] # Výběr hodnot z prvních dvou řádků a sloupců
+
+m[ , 3] # Výběr všech řádků třetího sloupce
+```
+K výběru také můžeme poutíž logické vektory nebo textové vektory (má-li matice
+pojmenované řádky/sloupce)
+```{r}
+m[c(TRUE, FALSE, FALSE), c(FALSE, FALSE, TRUE, TRUE)]
+
+m["row2", c("col3", "col4")]
+```
+Anebo jinou matici logických hodnot se shodnými dimenzemi.
+```{r}
+m_logical <- matrix(
+  c(TRUE, FALSE, FALSE, TRUE,
+    FALSE, TRUE, TRUE, FALSE,
+    TRUE, FALSE, FALSE, TRUE),
+  byrow = TRUE, nrow = 3)
+m_logical
+
+m[m_logical]
+```
+## Filmy Q. Tarantina: Procvičování
+Budeme se zabývat počtem "cursing words" v několika filmech Q. Tarantina.
+```{r}
+# Názvy filmů
+movies <- c("Django Unchained", "Inglorious Basterds", "Jackie Brown",
+            "Kill Bill: Vol. 1", "Kill Bill: Vol. 2", "Pulp Fiction", 
+            "Reservoir Dogs")
+# Počty slov
+profanities <- c(262, 58, 368, 57, 69, 469, 421)
+profanities
+```
+* Pojmenujte prvky vektoru `profanities` vektorem `movies` 
+* Vyberte několika možnými způsoby počty "cursing words" pro filmy
+Inglorious Basterds a Pulp Fiction
+
+Zaznamenáme si, kolikrát v jednotlivých filmech zazněla slova "hell" a "goddamn"
+```{r}
+hell <-  c(10, 4, 10, 3, 1, 2, 12)
+goddamn <-  c(28, 8, 27, 7, 5, 28, 10)
+```
+* Nejprve prkvy obou vektorů opět pojmenujte podle filmů.
+* Poté vytvořte nový vektor `spirituality` jako součet obou vektorů. 
+* Pomocí funkce sum() vypočtěte, kolikrát celkově zazněla slova hell/goddamn.
+* Vhodným logických operátorem zjistěte, ve kterých filmech vícekrát zaznělo
+slovo "hell" než "goddamn"
+* Ve kterých filmech zaznělo více než 100 cursing words?
+
+Doplníme si údaje o počtu zachycených úmrtí.
+```{r}
+deaths <- c(47, 48, 4, 63, 11, 7, 10)
+names(deaths) <- movies
+deaths
+```
+* Vytvořte matici, kde na řádcích budou jednotlivé filmy a ve sloupcích údaje 
+o počtu `profanities` a `deaths`. Náležitě také pojmenujte řádky a sloupce 
+matice.
+* Zkuste na matici aplikovat funkce `colSums()`, `colMeans()`, `rowSums()` a `rowMeans()`.
+Co tyto funkce počítají?
+* Pomocí funkce `cbind()` přidejte do matice vektor `year` s roky
+premiéry filmů jako nový sloupec:
+```{r}
+year <- c(2012, 2009, 1997, 2003, 2004, 1994, 1992)
+```
+* Pomocí funkce `rbind()` přidejte do matice vektor `The Hateful Eight` s údaji
+o novém filmu:
+```{r}
+`The Hateful Eight` <- c(107, 20, 2015)
+```
+* Pomocí číselných indexů:
+  * Vyberte celý poslední řádek matice, který jste právě přidali.
+  * vyberte rok premiéry *The Hateful Eight*.
+  * Vyberte sloupec s počty úmrtí.
+* Pomocí textových vektorů vyberte počet profanities v Pulp Fiction.
+* Pomocí logického vektoru vyberte všechny řádky s filmy, které měly premiéru
+po roce 2000
+* Vyberte sloupec deaths jakýmkoli způsobem a vhodnou funkcí zjistěne průměrný
+počet úmrtí na jeden film.
+* Jaký je Tarantino index (tj. počet mrtvých na počet nadávek) pro Inglorious Basterds?
+Vyberte z matice nejprve jeden a poté druhý příslušný prvek a poté je vydělte.
+  
+# Dataframe
+Dataframe je matice tak, jak ji chápeme při analýze dat. Dataframe je uspořádán
+do sloupců a řádků, přičemž řádky odpovídají pozorováním/případům a sloupce
+proměnným. Technicky je dataframe typ listu, protože může obsahovat různé typy
+vektorů, ale je omezen tím, že jeho prvky (sloupce) musejí mít stejnou délku.
+
+Balíčky v R obsahují i různé dataframy
+```{r}
+data() # Přehled zabudovaných datasetů
+data(USArrests) # Vyvolání zabudovaného datasetu
+View(USArrests) # Prohlížení v RStudiu
+```
+K orientaci v dataframu slouží několik funkcí (tyto funkce lze použít i 
+pro jiné typy vektorů):
+
+* `head()` - ukáže několik prvních řádků;
+* `tail()`- ukáže několik posledních řádků;
+* `str` - struktura dat; podobně `glimpse()` z balíčku dplyr
+```{r}
+head(USArrests)
+
+head(USArrests, n = 10)
+
+tail(USArrests)
+
+tail(USArrests, n = 15)
+
+
+str(USArrests)
+
+glimpse(USArrests)
+```
+I když to děláme spíš výjimečně, dataframe lze vytvoři přímo v eRku pomocí funkce
+data.frame()
+```{r}
+planets <- data.frame(
+  name = c("Mercury", "Venus", "Earth", "Mars", 
+           "Jupiter", "Saturn", "Uranus", "Neptune"),
+  type = c("Terrestrial", "Terrestrial", "Terrestrial","Terrestrial", 
+           "Gas giant", "Gas giant", "Gas giant", "Gas giant"),
+  diameter = c(0.382, 0.949, 1, 0.532, 11.209, 9.449, 4.007, 3.883),
+  rotation = c(58.64, -243.02, 1, 1.03, 0.41, 0.43, -0.72, 0.67),
+  rings = c(FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE)
+)
+planets
+```
+## Výběr prvků dataframu
+Výběr prvků dataframu je velmi podobný tomu u matic. 
+```{r}
+# První až třetí řádek, první sloupec
+planets[1:3, 1]
+
+# První a třetí sloupec
+planets[, c(1, 3)]
+
+# Jde to i bez čárky, protože sloupce jsou považovány za základní
+# stavební prvky dataframu
+planets[c(1, 3)] 
+
+length(planets) # Proto i délka odpovídá počtu sloupců
+
+# První až třet řádek, sloupec "name"
+planets[1:3,"name"]
+```
+Sloupce můžeme z dataframu "vyříznout" podobně jako u listů.
+```{r}
+planets[["name"]]
+
+planets$name
+
+planets$diameter
+```
+## Řazení a filtrování
+K seřezaní řádků podle hodnot některého ze sloupců můžeme funkci order().
+Výstupem této funkce je pořadí hodnot podle daného vektoru nebo vektorů
+```{r}
+planets$diameter
+
+order(planets$diameter) # Defaultně vzestupně
+
+order(planets$diameter, decreasing = TRUE) # Takto sestupně
+
+# Vektor, který je výstupem funkce order(), můžeme využít k seřazení řádků
+planets[order(planets$diameter, decreasing = FALSE), ]
+
+planets[order(planets$diameter, decreasing = TRUE), ]
+
+# Co dělá tato funkce?
+sort(planets$diameter)
+
+sort(planets$diameter, decreasing = TRUE)
+
+```
+K filtrování můžeme použít logické operátory v kombinaci s hranatými závorkami
+nebo funkcí subset(). Funkce subset() vyřaduje o něco méně psaní,
+protože vektor/sloupec hledá automaticky v rámci použitého dataframu.
+```{r}
+planets$rotation < 0
+
+# Tyto operace jsou ekvivalentní:
+planets[planets$rotation < 0, ]
+
+subset(planets, rotation < 0)
+```
+Brzo se naučíme ještě jednoduší a intuitivnější funkce (z balíčku *tidyverse*) 
+pro výběr řádků a sloupců.
+
+## Tibbles 
+Tibbles jsou vlastně upgradované dataframes. Chovájí se trochu jinak než 
+obyčejné dataframes, ale tak, aby nám to ulehčilo práci.
+Obyčejný dataframe můžeme změnit v tibble pomocí funkce `as_tibble()` a 
+ověřit si, zda je nějaký objekt tibble, pomocí funkce `is_tibble`.
+```{r}
+head(iris)
+
+is_tibble(iris)
+
+as_tibble(iris)
+```
+Vytvořit tibble z jednotlivých vektorů pak lze pomocí funkce tibble().
+Tato funkce automaticky recykluje vektory, které mají jen jeden prvek,
+a umožňuje se rovnou odkazovat na právě vytvořené vektory, jako je 
+to ilustrováno níže.
+```{r}
+tibble(
+  x = 1:5, 
+  y = 1, 
+  z = x ^ 2 + y
+)
+```
+Tibble také umožňuje dát sloupcům nestandardní jména, např. jména 
+nezačínající písmenem nebo zahrnující speciální znaky. Stačí k tomu použít 
+zpětný apostrof (R Alt + ý). Ale není to něco, co bychom si v praxi přáli dělat.
+```{r}
+tb <- tibble(
+  `:)` = "smile", 
+  ` ` = "space",
+  `2000` = "number"
+)
+tb
+```
+Další způsob, jak vytvořit tibble, nabízí funkce tribble(). S využitím této
+funkce "plníme" tibble po řádcích, nikoli po sloupcích jako. Jména sloupců uvádíme
+jako první a dáváme před ně tildu (na české klávesnic R Alt + 1)
+```{r}
+tribble(
+  ~x, ~y, ~z, # Jména sloupců
+  
+  "a", 2, 3.6, # první řádek hodnot
+  "b", 1, 8.5 # druhý řádek hodnot
+)
+```
+Když si tibble vyvoláme do konzole, na rozdíl od obyčejných dataframes ji 
+nezahltí, protože zobrazí jen prvních deset řádků a tolik sloupců, kolik
+se jich do konzole vleze. Navíc se u každého sloupce zobrazí jeho typ.
+```{r}
+tb <- tibble(
+  a = Sys.time() + runif(1e3) * 86400,
+  b = as.Date(Sys.time()) + runif(1e3) * 30,
+  c = 1:1e3,
+  d = runif(1e3),
+  e = sample(letters, 1e3, replace = TRUE)
+)
+tb
+```
+Kdybychom nám toto nevyhovovalo, můžeme pomocí funkce print upřesnit, kolik
+řádků a sloupců chceme v konzoli zobrazit.
+```{r}
+print(tb, n = 20, width = Inf)
+```
+Výběr prvků z tibblu je v podstatě stejný jako výběr prvků z dataframes, 
+protože tibble je "jen" vylepšený dataframe.
+```{r}
+df <- tibble(
+  x = runif(5),
+  y = rnorm(5),
+  z = runif(5)
+)
+df
+
+# Výběr jediného prvku pomocí jména
+df$x
+
+df[["x"]]
+
+# Výběr prvků pomocí pozice
+df[[1]]
+
+df[1]
+
+```
+### Cvičení{-}
+
+* Pomocí které funkce lze ověřit, zda je datový objekt tibble? 
+Zkuste uhádnout název funkce a zkusit ji na dataframu `mtcars`.
+* Porovnejte výsledky stejných operací na obyčejném dataframu vs tibblu.
+```{r}
+df <- data.frame(
+  x = c(1, 2, 3), 
+  y = c("a", "b", "c")
+)
+
+df$x
+
+df[, "y"]
+
+df[, c("x", "y")]  
+
+  
+tb <- tibble(
+  x = c(1, 2, 3), 
+  y = c("a", "b", "c")
+)
+
+tb$x
+
+tb[, "y"]
+
+tb[, c("x", "y")] 
+
+```
+# Co je potřeba si zapamatovat
+* Jaké jsou základní matematické operátory v R.
+* Jaké existují základní typy vektorů a jaké jsou mezi nimi rozdíly.
+* Jak ověřit, jakého typu je určitý vektor.
+* Jak lze vytvářet atomické vektory, matice a dataframy/listy.
+* Jak lze pojmenovat prvky různých typů vektoru (při vytváření, dodatečně).
+* Jak lze subsetovat atomické vektory, matice, listy a dataframy/tibbly.
+* Jaké jsou základní logické operátory a jak se používají k subsettingu.
+* Co dělají tzv. testovací funkce (začínající na `is_` nebo `is.`) a jak se používají.
+* Jak fungují a co dělají funkce: `typeof()`, `is.na()`, `sum()`, `mean()`,
+`rowSums()`, `colSums()`, `rowMeans()`, `colMeans()`, `head()`, `tail()`, 
+`str()`, `glimpse()`, `factor()`, `subset()`, `order()`, `sort()`.

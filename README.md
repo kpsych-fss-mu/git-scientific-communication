@@ -18,7 +18,7 @@
 <!-- PROJECT LOGO -->
 <br />
 
-  <h3 align="center">OUTtroduction to Git and GitHub for the Scientific Communication</h3>
+  <h3 align="center">El Paso OUTtroduction to Git and GitHub for the Scientific Communication</h3>
 
   <p align="center">
     An awesome README template to jumpstart your projects!
